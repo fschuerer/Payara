@@ -41,6 +41,7 @@ package fish.payara.microprofile.jwtauth.cdi;
 
 import fish.payara.microprofile.jwtauth.eesecurity.JWTAuthenticationMechanism;
 import fish.payara.microprofile.jwtauth.eesecurity.SignedJWTIdentityStore;
+import fish.payara.microprofile.jwtauth.eesecurity.SignedJWTIdentityStoreMutliIssuers;
 import fish.payara.microprofile.jwtauth.jwt.ClaimAnnotationLiteral;
 import fish.payara.microprofile.jwtauth.jwt.ClaimValueImpl;
 import fish.payara.microprofile.jwtauth.jwt.JWTInjectableType;
@@ -97,7 +98,14 @@ public class CdiInitEventHandler {
                 .types(Object.class, IdentityStore.class, SignedJWTIdentityStore.class)
                 .addToId("store " + LoginConfig.class)
                 .create(e -> new SignedJWTIdentityStore()));
-
+        
+        afterBeanDiscovery.addBean(new PayaraCdiProducer<IdentityStore>()
+                .scope(ApplicationScoped.class)
+                .beanClass(IdentityStore.class)
+                .types(Object.class, IdentityStore.class, SignedJWTIdentityStore.class, SignedJWTIdentityStoreMutliIssuers.class)
+                .addToId("storemulti " + LoginConfig.class)
+                .create(e -> new SignedJWTIdentityStoreMutliIssuers()));
+           
         afterBeanDiscovery.addBean(new PayaraCdiProducer<HttpAuthenticationMechanism>()
                 .scope(ApplicationScoped.class)
                 .beanClass(HttpAuthenticationMechanism.class)
