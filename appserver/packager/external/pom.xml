@@ -52,7 +52,7 @@
     <parent>
       <groupId>fish.payara.server</groupId>
       <artifactId>payara-parent</artifactId>
-      <version>6.2023.4</version>
+      <version>6.2023.5</version>
       <relativePath>../../pom.xml</relativePath>
     </parent>
     
@@ -63,7 +63,7 @@
 
     <properties>
         <findbugs.skip>true</findbugs.skip>
-        <deploy.skip>true</deploy.skip>
+        <deploy.skip>false</deploy.skip>
     </properties>
 
     <modules>

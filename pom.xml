@@ -46,7 +46,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fish.payara.server</groupId>
     <artifactId>payara-aggregator</artifactId>
-    <version>6.2023.4</version>
+    <version>6.2023.5</version>
     <packaging>pom</packaging>
 
     <name>Payara Project</name>
@@ -62,7 +62,7 @@
         <connection>scm:git:git@github.com:payara/payara.git</connection>
         <url>scm:git:git@github.com:payara/payara.git</url>
         <developerConnection>scm:git:git@github.com:payara/payara.git</developerConnection>
-        <tag>payara-server-6.2023.4</tag>
+        <tag>payara-server-6.2023.5</tag>
     </scm>
 
     <issueManagement>
@@ -166,8 +166,8 @@
         <hk2.version>3.0.1.payara-p3</hk2.version>
         <osgi-resource-locator.version>1.0.3</osgi-resource-locator.version>
         <stax-api.version>1.0-2</stax-api.version>
-        <jackson.version>2.14.1</jackson.version>
-        <snakeyaml.version>1.33</snakeyaml.version>
+        <jackson.version>2.15.0</jackson.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
         <hazelcast.version>5.2.2</hazelcast.version>
         <jaxb-api.version>4.0.0</jaxb-api.version>
         <jaxb-impl.version>4.0.1</jaxb-impl.version>
@@ -219,7 +219,7 @@
         <parsson.version>1.1.1.payara-p1</parsson.version>
         <jsonp-api.version>2.1.0</jsonp-api.version>
         <jbi.version>1.0</jbi.version>
-        <microprofile-release.version>5.0</microprofile-release.version>
+        <microprofile-release.version>6.0</microprofile-release.version>
         <microprofile-opentracing.version>3.0</microprofile-opentracing.version>
         <microprofile-config.version>3.0.2</microprofile-config.version>
         <microprofile-fault-tolerance.version>4.0.2.payara-p1</microprofile-fault-tolerance.version>
