@@ -45,10 +45,9 @@
     <parent>
         <groupId>fish.payara.server.internal.packager</groupId>
         <artifactId>external</artifactId>
-        <version>6.2023.5</version>
+        <version>6.2023.6</version>
     </parent>
 
-    <groupId>fish.payara.server.core.packager</groupId>
     <artifactId>metro-xmlsec-repackaged</artifactId>
     <name>metro-xmlsec-repackaged</name>
     <description>Metro xmlsec repackaged as a module</description>

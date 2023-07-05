@@ -44,7 +44,7 @@ holder.
     <parent>
         <groupId>fish.payara.server.internal.payara-appserver-modules</groupId>
         <artifactId>payara-appserver-modules</artifactId>
-        <version>6.2023.5</version>
+        <version>6.2023.6</version>
     </parent>
 
     <artifactId>payara-rest-endpoints</artifactId>
@@ -55,7 +55,6 @@ holder.
         <dependency>
             <groupId>fish.payara.server.core.web</groupId>
             <artifactId>web-glue</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
