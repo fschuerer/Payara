@@ -48,7 +48,7 @@
     <parent>
         <groupId>fish.payara.server</groupId>
         <artifactId>payara-aggregator</artifactId>
-        <version>6.2023.7</version>
+        <version>6.2023.8</version>
     </parent>
 
     <artifactId>payara-nucleus-parent</artifactId>
@@ -926,16 +926,6 @@ Parent is ${project.parent}</echo>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.transformer</groupId>
-                <artifactId>org.eclipse.transformer.payara</artifactId>
-                <version>${payara.transformer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fish.payara.deployment.transformer</groupId>
-                <artifactId>deployment-transformer-api</artifactId>
-                <version>${payara.deployment.transformer.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
