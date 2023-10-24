@@ -46,28 +46,15 @@
     <parent>
         <groupId>fish.payara.server.core</groupId>
         <artifactId>core-aggregator</artifactId>
-        <version>6.2023.9</version>
+        <version>6.9.0-SNAPSHOT</version>
     </parent>
     <artifactId>core-parent</artifactId>
-    <version>6.2023.9</version>
+    <version>6.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Payara Core Parent</name>
 
-    <distributionManagement>
-        <repository>
-            <id>payara-nexus-artifacts</id>
-            <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
-        </repository>
-        <snapshotRepository>
-            <id>payara-nexus-snapshots</id>
-            <url>https://nexus.payara.fish/repository/payara-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <properties>
-        <!-- core artifacts end up in payara-artifacts repo -->
-        <deploy.skip>false</deploy.skip>
         <jar.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</jar.manifest>
     </properties>
 
@@ -374,6 +361,27 @@
                 </configuration>
             </plugin>
 
+            <!-- Add manpages for asadmin commands -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-resource</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/manpages</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
 
@@ -401,15 +409,6 @@
                         <testExcludes>
                             <testExclude>**/.ade_path/**</testExclude>
                         </testExcludes>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${maven.deploy.plugin.version}</version>
-                    <configuration>
-                        <retryFailedDeploymentCount>10</retryFailedDeploymentCount>
-                        <skip>${deploy.skip}</skip>
                     </configuration>
                 </plugin>
 
@@ -609,6 +608,13 @@
         <profile>
             <id>force-semver</id>
             <!-- Force semantic versioning. The differences are in target/japicmp in text, html and xml -->
+            <activation>
+                <property>
+                    <!-- Active unless explicitly set to false -->
+                    <name>core.force.semver</name>
+                    <value>!false</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <!-- plugin to parse version number without "-SNAPSHOT" -->
