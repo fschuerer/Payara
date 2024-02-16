@@ -97,10 +97,7 @@ public class SignedJWTIdentityStoreMutliIssuers extends SignedJWTIdentityStore {
             URI providerConfigurationURI = issuerURI.resolve(issuerURI.getPath() + pathConfig);
 
             HttpRequest request = HttpRequest.newBuilder(providerConfigurationURI).GET().build();
-            HttpClient client = HttpClient
-                    .newBuilder()
-                    .sslContext(NoOpSSLContextBuilder.build())
-                    .build();
+            HttpClient client = HttpClient.newHttpClient();
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
             if (response.statusCode() == 200) {
                 try (InputStream inputStream = response.body(); JsonReader reader = Json.createReader(inputStream)) {
