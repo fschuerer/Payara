@@ -46,11 +46,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fish.payara.server</groupId>
     <artifactId>payara-aggregator</artifactId>
-    <version>6.2023.12</version>
+    <version>6.2024.1</version>
     <parent>
         <groupId>fish.payara.server.core</groupId>
         <artifactId>core-aggregator</artifactId>
-        <version>6.10.0</version>
+        <version>6.11.2</version>
         <relativePath>core</relativePath>
     </parent>
     <packaging>pom</packaging>
@@ -132,13 +132,13 @@
 
         <osgi-resource-locator.version>1.0.3</osgi-resource-locator.version>
         <snakeyaml.version>2.0</snakeyaml.version>
-        <jstl-impl.version>3.0.0</jstl-impl.version>
+        <jstl-impl.version>3.0.1</jstl-impl.version>
         <mojarra.version>4.0.0.payara-p2</mojarra.version>
         <jaxb-extra-osgi.version>2.3.0</jaxb-extra-osgi.version>
 
         <yasson.version>3.0.3</yasson.version>
         <eclipselink.version>4.0.1.payara-p2</eclipselink.version>
-        <eclipselink.asm.version>9.5.0</eclipselink.asm.version>
+        <eclipselink.asm.version>9.6.0</eclipselink.asm.version>
         <mq.version>6.3.0.payara-p3</mq.version>
         <com.ibm.jbatch.container.version>2.1.1</com.ibm.jbatch.container.version>
         <com.ibm.jbatch.spi.version>2.1.1</com.ibm.jbatch.spi.version>
@@ -152,13 +152,15 @@
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <microprofile-release.version>6.1</microprofile-release.version>
         <payara-arquillian-container.version>3.0.alpha6</payara-arquillian-container.version>
-        <h2db.version>2.2.220</h2db.version>
+        <h2db.version>2.2.224</h2db.version>
         <concurrent.version>3.0.2.payara-p1</concurrent.version>
         <monitoring-console-process.version>2.0.2</monitoring-console-process.version>
         <monitoring-console-webapp.version>2.0.2</monitoring-console-webapp.version>
         <validation.xml.root>${project.build.outputDirectory}</validation.xml.root>
 
         <deploy.skip>true</deploy.skip>
+        <javadoc.skip>true</javadoc.skip>
+        <source.skip>true</source.skip>
     </properties>
 
     <profiles>

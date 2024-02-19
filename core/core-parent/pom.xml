@@ -46,16 +46,18 @@
     <parent>
         <groupId>fish.payara.server.core</groupId>
         <artifactId>core-aggregator</artifactId>
-        <version>6.11.0-SNAPSHOT</version>
+        <version>6.12.0-SNAPSHOT</version>
     </parent>
     <artifactId>core-parent</artifactId>
-    <version>6.11.0-SNAPSHOT</version>
+    <version>6.12.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Payara Core Parent</name>
 
     <properties>
         <jar.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</jar.manifest>
+        <javadoc.skip>false</javadoc.skip>
+        <source.skip>false</source.skip>
     </properties>
 
     <dependencyManagement>
@@ -332,7 +334,17 @@
                     <excludes>
                         <exclude>**/.ade_path/**</exclude>
                     </excludes>
+                    <skipSource>${source.skip}</skipSource>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -359,6 +371,14 @@
                     <detectOfflineLinks>false</detectOfflineLinks>
                     <skip>${javadoc.skip}</skip>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Add manpages for asadmin commands -->
@@ -635,6 +655,7 @@
                                 <excludes>
                                     <exclude>io.opentelemetry.extension</exclude>
                                     <exclude>io.opentelemetry.instrumentation</exclude>
+                                    <exclude>fish.payara.shaded</exclude>
                                 </excludes>
                             </parameter>
                         </configuration>
