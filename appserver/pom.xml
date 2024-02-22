@@ -49,7 +49,7 @@
     <parent>
         <groupId>fish.payara.server</groupId>
         <artifactId>payara-nucleus-parent</artifactId>
-        <version>6.2024.1</version>
+        <version>6.2024.2</version>
         <relativePath>../nucleus/pom.xml</relativePath>
     </parent>
 
@@ -143,7 +143,6 @@
                     <target>${javase.version}</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.glassfish.build</groupId>
                 <artifactId>spec-version-maven-plugin</artifactId>

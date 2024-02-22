@@ -45,7 +45,7 @@
     <parent>
         <groupId>fish.payara.samples</groupId>
         <artifactId>payara-samples</artifactId>
-        <version>6.2024.1</version>
+        <version>6.2024.2</version>
     </parent>
 
     <artifactId>payara-samples-profiled-tests</artifactId>
@@ -108,4 +108,13 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    
+    <profiles>
+        <profile>
+            <id>playwright</id>
+            <modules>
+                <module>cleanboot</module>
+            </modules>        
+        </profile>
+    </profiles>
 </project>
