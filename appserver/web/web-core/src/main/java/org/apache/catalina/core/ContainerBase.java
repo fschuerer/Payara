@@ -62,9 +62,12 @@ package org.apache.catalina.core;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -206,9 +209,18 @@ public abstract class ContainerBase
 
 
     /**
+     * The deprecated processor delay for this component.
+     * 
+     * DO NOT USE! Retained for semantic versioning. Replaced by {@link ContainerBase#backgroundProcessorDelayAtomic}.
+     * Use {@link ContainerBase#getBackgroundProcessorDelay()} and {@link ContainerBase#setBackgroundProcessorDelay(int)}
+     */
+    @Deprecated(forRemoval = true, since = "6.17.0")
+    protected int backgroundProcessorDelay = -1;
+
+    /**
      * The processor delay for this component.
      */
-    protected int backgroundProcessorDelay = -1;
+    private AtomicInteger backgroundProcessorDelayAtomic = new AtomicInteger(-1);
 
 
     /**
@@ -317,13 +329,12 @@ public abstract class ContainerBase
     /**
      * The background thread completion semaphore.
      */
-    private volatile boolean threadDone = false;
-
+    private AtomicBoolean threadDone = new AtomicBoolean();
 
     /**
      * The session background thread completion semaphore.
      */
-    private volatile boolean threadSessionDone = false;
+    private AtomicBoolean threadSessionDone = new AtomicBoolean();
 
 
     /**
@@ -382,7 +393,7 @@ public abstract class ContainerBase
      */
     @Override
     public int getBackgroundProcessorDelay() {
-        return backgroundProcessorDelay;
+        return backgroundProcessorDelayAtomic.get();
     }
 
 
@@ -395,6 +406,7 @@ public abstract class ContainerBase
      */
     @Override
     public void setBackgroundProcessorDelay(int delay) {
+        backgroundProcessorDelayAtomic.set(delay);
         backgroundProcessorDelay = delay;
     }
 
@@ -1734,12 +1746,13 @@ public abstract class ContainerBase
 
         if (thread != null)
             return;
-        if (backgroundProcessorDelay <= 0)
+        if (backgroundProcessorDelayAtomic.get() <= 0)
             return;
 
-        threadDone = false;
+        threadDone.set(false);
         String threadName = "ContainerBackgroundProcessor[" + toString() + "]";
-        thread = new Thread(new ContainerBackgroundProcessor(), threadName);
+        thread = new Thread(new ContainerBackgroundProcessorAtomic(getMappingObject(), threadDone,
+                backgroundProcessorDelayAtomic), threadName);
         thread.setDaemon(true);
         thread.start();
 
@@ -1750,11 +1763,12 @@ public abstract class ContainerBase
      * to update lastaccesstime and accessedTime.
      */
     protected void threadSessionStart() {
-        if (sessionThread != null)
+        if (sessionThread != null || manager == null)
             return;
-        threadSessionDone = false;
+        threadSessionDone.set(false);
         String threadName = "ContainerBackgroundSessionProcessor[" + toString() + "]";
-        sessionThread = new Thread(new ContainerBackgroundSessionProcessor(), threadName);
+        sessionThread = new Thread(new ContainerBackgroundSessionProcessorAtomic(getMappingObject(), manager,
+                threadSessionDone), threadName);
         sessionThread.setDaemon(true);
         sessionThread.start();
         
@@ -1770,7 +1784,7 @@ public abstract class ContainerBase
         if (thread == null)
             return;
 
-        threadDone = true;
+        threadDone.set(true);
         thread.interrupt();
         try {
             thread.join();
@@ -1791,7 +1805,7 @@ public abstract class ContainerBase
             return;
         }
 
-        this.threadSessionDone = true;
+        this.threadSessionDone.set(true);
         sessionThread.interrupt();
         try {
             sessionThread.join();
@@ -1803,23 +1817,34 @@ public abstract class ContainerBase
 
     // -------------------------------------- ContainerExecuteDelay Inner Class
 
-
     /**
      * Private thread class to invoke the backgroundProcess method 
      * of this container and its children after a fixed delay.
+     *
+     * Replaces {@link ContainerBackgroundProcessor}
      */
-    protected class ContainerBackgroundProcessor implements Runnable {
+    protected static class ContainerBackgroundProcessorAtomic implements Runnable {
+        private final WeakReference<?> base;
+        private final AtomicBoolean threadDone;
+        private final AtomicInteger backgroundProcessorDelay;
+
+        public ContainerBackgroundProcessorAtomic(Object base,
+                                            AtomicBoolean threadDone, AtomicInteger backgroundProcessorDelay) {
+            this.base = new WeakReference<>(base);
+            this.threadDone = threadDone;
+            this.backgroundProcessorDelay = backgroundProcessorDelay;
+        }
 
         @Override
         public void run() {
-            while (!threadDone) {
+            while (!threadDone.get() && base.get() != null) {
                 try {
-                    Thread.sleep(backgroundProcessorDelay * 1000L);
+                    Thread.sleep(backgroundProcessorDelay.get() * 1000L);
                 } catch (InterruptedException e) {
                     // Ignore
                 }
-                if (!threadDone) {
-                    Container parent = (Container) getMappingObject();
+                if (!threadDone.get()) {
+                    Container parent = (Container) base.get();
                     ClassLoader cl = 
                         Thread.currentThread().getContextClassLoader();
                     if (parent.getLoader() != null) {
@@ -1855,21 +1880,32 @@ public abstract class ContainerBase
     /**
      * Thread class to invoke the backgroundSessionUpdate method 
      * of this container and its children after 500 milliseconds.
+     *
+     * Replaces {@link ContainerBackgroundSessionProcessor}
      */
-    protected class ContainerBackgroundSessionProcessor implements Runnable {
+    protected static class ContainerBackgroundSessionProcessorAtomic implements Runnable {
+        private final WeakReference<?> base;
+        private final WeakReference<Manager> manager;
+        private final AtomicBoolean threadSessionDone;
+
+        public ContainerBackgroundSessionProcessorAtomic(Object base, Manager manager, AtomicBoolean threadSessionDone) {
+            this.base = new WeakReference<>(base);
+            this.manager = new WeakReference<>(manager);
+            this.threadSessionDone = threadSessionDone;
+        }
 
         @Override
         public void run() {
-            if(manager != null) {
-                while (!threadSessionDone) {
+            if(manager.get() != null) {
+                while (!threadSessionDone.get() && base.get() != null) {
                     try {
                         //this will calculate the interval depending on the configured timeout from the application
-                        Thread.sleep( (manager.getMaxInactiveInterval() / 2) * 1000L);
+                        Thread.sleep( (manager.get().getMaxInactiveInterval() / 2) * 1000L);
                     } catch (InterruptedException e) {
                         // Ignore
                     }
-                    if (!threadSessionDone) {
-                        Container parent = (Container) getMappingObject();
+                    if (!threadSessionDone.get()) {
+                        Container parent = (Container) base.get();
                         ClassLoader cl =
                                 Thread.currentThread().getContextClassLoader();
                         if (parent.getLoader() != null) {
@@ -1899,6 +1935,68 @@ public abstract class ContainerBase
                     processChildren(child, cl);
                 }
             }
+        }
+
+    }
+
+    // -------------------------------------- DEPRECATED!
+    /**
+     * Deprecated private thread class to invoke the backgroundProcess method
+     * of this container and its children after a fixed delay.
+     *
+     * DO NOT USE! Retained for semantic versioning. Replaced by {@link ContainerBackgroundProcessorAtomic}.
+     */
+    @Deprecated(forRemoval = true, since = "6.17.0")
+    protected class ContainerBackgroundProcessor implements Runnable {
+
+        private final ContainerBackgroundProcessorAtomic containerBackgroundProcessorAtomic;
+
+        public ContainerBackgroundProcessor() {
+            containerBackgroundProcessorAtomic = new ContainerBackgroundProcessorAtomic(getMappingObject(),
+                    threadDone, backgroundProcessorDelayAtomic);
+        }
+
+        public ContainerBackgroundProcessor(ContainerBackgroundProcessorAtomic containerBackgroundProcessorAtomic) {
+            this.containerBackgroundProcessorAtomic = containerBackgroundProcessorAtomic;
+        }
+
+        @Override
+        public void run() {
+            containerBackgroundProcessorAtomic.run();
+        }
+
+        protected void processChildren(Container container, ClassLoader cl) {
+            containerBackgroundProcessorAtomic.processChildren(container, cl);
+        }
+    }
+
+    /**
+     * Deprecated thread class to invoke the backgroundSessionUpdate method
+     * of this container and its children after 500 milliseconds.
+     *
+     * DO NOT USE! Retained for semantic versioning. Replaced by {@link ContainerBackgroundSessionProcessorAtomic}.
+     */
+    @Deprecated(forRemoval = true, since = "6.17.0")
+    protected class ContainerBackgroundSessionProcessor implements Runnable {
+
+        private final ContainerBackgroundSessionProcessorAtomic containerBackgroundSessionProcessorAtomic;
+
+        public ContainerBackgroundSessionProcessor() {
+            containerBackgroundSessionProcessorAtomic = new ContainerBackgroundSessionProcessorAtomic(
+                    getMappingObject(), manager, threadSessionDone);
+        }
+
+        public ContainerBackgroundSessionProcessor(ContainerBackgroundSessionProcessorAtomic containerBackgroundSessionProcessorAtomic) {
+            this.containerBackgroundSessionProcessorAtomic = containerBackgroundSessionProcessorAtomic;
+        }
+
+        @Override
+        public void run() {
+            containerBackgroundSessionProcessorAtomic.run();
+        }
+
+        protected void processChildren(Container container, ClassLoader cl) {
+            containerBackgroundSessionProcessorAtomic.processChildren(container, cl);
         }
 
     }
