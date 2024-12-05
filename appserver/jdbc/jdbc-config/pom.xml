@@ -45,7 +45,7 @@
     <parent>
         <groupId>fish.payara.server.internal.jdbc</groupId>
         <artifactId>jdbc</artifactId>
-        <version>6.2024.9</version>
+        <version>6.2024.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jdbc-config</artifactId>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>5.3.0</version>
+            <version>5.4.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
