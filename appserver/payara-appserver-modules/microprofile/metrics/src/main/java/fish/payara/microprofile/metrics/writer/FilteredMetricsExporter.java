@@ -58,14 +58,14 @@ public class FilteredMetricsExporter extends OpenMetricsExporter {
     }
 
     protected FilteredMetricsExporter(String scope, PrintWriter out, Set<String> typeWrittenByGlobalName,
-                                      Set<String> helpWrittenByGlobalName, Collection<String> metricNames) {
-        super(scope, out, typeWrittenByGlobalName, helpWrittenByGlobalName);
+                                      Set<String> helpWrittenByGlobalName, Set<String> valueWrittenByGlobalName,Collection<String> metricNames) {
+        super(scope, out, typeWrittenByGlobalName, helpWrittenByGlobalName, valueWrittenByGlobalName);
         this.metricNames = metricNames;
     }
 
     @Override
     public MetricExporter in(String scope, boolean asNode) {
-        return new FilteredMetricsExporter(scope, out, typeWrittenByGlobalName, helpWrittenByGlobalName, metricNames);
+        return new FilteredMetricsExporter(scope, out, typeWrittenByGlobalName, helpWrittenByGlobalName, valueWrittenByGlobalName, metricNames);
     }
 
     @Override
