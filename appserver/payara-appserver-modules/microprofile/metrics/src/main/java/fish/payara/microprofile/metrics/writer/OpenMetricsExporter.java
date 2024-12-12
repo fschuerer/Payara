@@ -304,7 +304,7 @@ public class OpenMetricsExporter implements MetricExporter {
     }
 
     protected void appendValue(String globalName, Tag[] tags, Number value) {
-        if (!valueWrittenByGlobalName.add(globalName)) {
+        if (!valueWrittenByGlobalName.add(globalName + tagsToString(tags))) {
             // write value only once per metric
             return;
         }
