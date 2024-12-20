@@ -46,7 +46,7 @@
     <parent>
         <groupId>fish.payara.server.internal.featuresets</groupId>
         <artifactId>featuresets</artifactId>
-        <version>6.2024.11</version>
+        <version>6.2024.12</version>
     </parent>
     
     <artifactId>payara-web-featureset</artifactId>
@@ -237,6 +237,13 @@
         <dependency>
             <groupId>fish.payara.server.internal.packager</groupId>
             <artifactId>docker</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>fish.payara.server.internal.packager</groupId>
+            <artifactId>payara-mvc</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>

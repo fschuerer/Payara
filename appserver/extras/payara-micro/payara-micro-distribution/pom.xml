@@ -45,7 +45,7 @@
     <parent>
         <groupId>fish.payara.server.internal.extras</groupId>
         <artifactId>payara-micro-parent</artifactId>
-        <version>6.2024.11</version>
+        <version>6.2024.12</version>
     </parent>
     <groupId>fish.payara.extras</groupId>
     <artifactId>payara-micro</artifactId>
@@ -492,5 +492,12 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>fish.payara.server.internal.packager</groupId>
+            <artifactId>payara-mvc</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>

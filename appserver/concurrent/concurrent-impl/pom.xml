@@ -48,7 +48,7 @@
     <parent>
         <groupId>fish.payara.server.internal.concurrent</groupId>
         <artifactId>concurrent</artifactId>
-        <version>6.2024.11</version>
+        <version>6.2024.12</version>
     </parent>    
     <artifactId>concurrent-impl</artifactId>
     <packaging>glassfish-jar</packaging>
@@ -114,7 +114,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>5.4.0</version>
+            <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
