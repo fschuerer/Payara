@@ -46,7 +46,7 @@
     <parent>
         <groupId>fish.payara.server.internal.tests</groupId>
         <artifactId>payara-tests</artifactId>
-        <version>6.2024.12</version>
+        <version>6.2025.1</version>
     </parent>
 
     <groupId>fish.payara.samples</groupId>
@@ -389,13 +389,13 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.26.3</version>
+                <version>3.27.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.omnifaces</groupId>
                 <artifactId>omniutils</artifactId>
-                <version>0.13</version>
+                <version>0.14</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
