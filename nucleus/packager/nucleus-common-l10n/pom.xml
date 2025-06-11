@@ -40,20 +40,20 @@
     holder.
 
 -->
+<!-- Portions Copyright 2025 Payara Foundation and/or its affiliates -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>fish.payara.server.internal.packager</groupId>
         <artifactId>nucleus-packages</artifactId>
-        <version>6.2025.5</version>
+        <version>6.2025.6</version>
     </parent>
     <artifactId>nucleus-common-l10n</artifactId>
     <name>Nucleus Commons Package l10n package</name>
     <packaging>distribution-fragment</packaging>
 
     <properties>
-        <deploy.skip>true</deploy.skip>
         <build.info.exclude>true</build.info.exclude> 
     </properties>
     

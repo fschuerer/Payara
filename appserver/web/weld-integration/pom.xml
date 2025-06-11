@@ -40,7 +40,7 @@
     holder.
 
 -->
-<!-- Portions Copyright [2018-2022] [Payara Foundation and/or its affiliates] -->
+<!-- Portions Copyright 2018-2025 Payara Foundation and/or its affiliates -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -48,7 +48,7 @@
     <parent>
 	      <groupId>fish.payara.server.internal.web</groupId>
     	  <artifactId>web</artifactId>
-        <version>6.2025.5</version>
+        <version>6.2025.6</version>
     </parent>
 
     <artifactId>weld-integration</artifactId>
@@ -83,9 +83,19 @@
                     <include>**/faces-config.xml</include>
                     <include>**/com.sun.faces.spi.FacesConfigResourceProvider</include>
                     <include>**/jakarta.enterprise.inject.spi.Extension</include>
+                    <include>**/org.glassfish.jersey.internal.spi.*</include>
                 </includes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>
@@ -94,8 +104,9 @@
             <artifactId>jakarta.faces</artifactId>
         </dependency>
         <dependency>
-            <groupId>fish.payara.server.core.web</groupId>
+            <groupId>fish.payara.server.internal.web</groupId>
             <artifactId>web-glue</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.enterprise</groupId>
@@ -168,8 +179,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>fish.payara.server.core.common</groupId>
+            <groupId>fish.payara.server.internal.common</groupId>
             <artifactId>glassfish-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>fish.payara.server.internal.ejb</groupId>
@@ -188,7 +200,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>5.5.0</version>
+            <version>5.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -200,6 +212,10 @@
             <groupId>fish.payara.server.internal.transaction</groupId>
             <artifactId>jta</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.json.bind</groupId>
+            <artifactId>jakarta.json.bind-api</artifactId>
         </dependency>
          <dependency>
              <groupId>jakarta.xml.ws</groupId>

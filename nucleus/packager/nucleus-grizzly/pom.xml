@@ -39,7 +39,7 @@
     only if the new code is made subject to such option by the copyright
     holder.
 
-    Portions Copyright 2018-2022 Payara Foundation and/or its affiliates
+    Portions Copyright 2018-2025 Payara Foundation and/or its affiliates
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -48,7 +48,7 @@
     <parent>
         <groupId>fish.payara.server.internal.packager</groupId>
         <artifactId>nucleus-packages</artifactId>
-        <version>6.2025.5</version>
+        <version>6.2025.6</version>
     </parent>
 
     <artifactId>nucleus-grizzly</artifactId>
@@ -62,9 +62,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>fish.payara.server.core.grizzly</groupId>
+            <groupId>fish.payara.server.internal.grizzly</groupId>
             <artifactId>nucleus-grizzly-all</artifactId>
-
+            <version>${project.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>

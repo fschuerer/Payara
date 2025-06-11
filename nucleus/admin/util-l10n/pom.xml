@@ -38,14 +38,14 @@
     only if the new code is made subject to such option by the copyright
     holder.
 
-    Portions Copyright [2019] [Payara Foundation and/or its affiliates]
+    Portions Copyright 2019-2025 Payara Foundation and/or its affiliates
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>fish.payara.server.internal.admin</groupId>
         <artifactId>nucleus-admin</artifactId>
-        <version>6.2025.5</version>
+        <version>6.2025.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>admin-util-l10n</artifactId>
@@ -54,7 +54,6 @@
     
     <properties>
         <javadoc.skip>true</javadoc.skip>
-        <deploy.skip>true</deploy.skip>
         <build.info.exclude>true</build.info.exclude>
     </properties>
     

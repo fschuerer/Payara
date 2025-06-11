@@ -55,7 +55,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Portions Copyright 2016-2024 Payara Foundation and/or its affiliates
+// Portions Copyright 2016-2025 Payara Foundation and/or its affiliates
 
 package org.glassfish.web.loader;
 
@@ -65,6 +65,7 @@ import com.sun.appserv.server.util.PreprocessorUtil;
 import com.sun.enterprise.deployment.Application;
 import com.sun.enterprise.deployment.util.DOLUtils;
 import com.sun.enterprise.glassfish.bootstrap.MainHelper.HotSwapHelper;
+import com.sun.enterprise.loader.CacheCleaner;
 import com.sun.enterprise.security.integration.DDPermissionsLoader;
 import com.sun.enterprise.security.integration.PermsHolder;
 import com.sun.enterprise.util.io.FileUtils;
@@ -80,6 +81,7 @@ import org.glassfish.api.deployment.InstrumentableClassLoader;
 import org.glassfish.api.deployment.ResourceClassLoader;
 import org.glassfish.api.deployment.ResourceEntry;
 import org.glassfish.common.util.InstanceCounter;
+import org.glassfish.exousia.AuthorizationService;
 import org.glassfish.hk2.api.PreDestroy;
 import org.glassfish.web.util.ExceptionUtils;
 import org.glassfish.web.util.IntrospectionUtils;
@@ -132,7 +134,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -2051,7 +2052,7 @@ public class WebappClassLoader
         // START SJSAS 6258619
         ClassLoaderUtil.releaseLoader(this);
         // END SJSAS 6258619
-        clearJaxRSCache();
+        CacheCleaner.clearCaches(this);
 
         synchronized(jarFilesLock) {
             started = false;
@@ -2658,23 +2659,6 @@ public class WebappClassLoader
         }
     }
 
-    private void clearJaxRSCache() {
-        try {
-            Class<?> cdiComponentProvider = CachingReflectionUtil
-                    .getClassFromCache("org.glassfish.jersey.ext.cdi1x.internal.CdiComponentProvider", this);
-            if (cdiComponentProvider != null) {
-                Field runtimeSpecificsField = CachingReflectionUtil.getFieldFromCache(cdiComponentProvider,
-                        "runtimeSpecifics", true);
-                Object runtimeSpecifics = runtimeSpecificsField.get(null);
-                CachingReflectionUtil.getMethodFromCache(runtimeSpecifics.getClass(),
-                                "clearJaxRsResource", true, ClassLoader.class)
-                        .invoke(runtimeSpecifics, this);
-            }
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Error clearing Jax-Rs cache", e);
-        }
-    }
-
     /**
      * Clear the {@link ResourceBundle} cache of any bundles loaded by this
      * class loader or any class loader where this loader is a parent class
@@ -3247,7 +3231,7 @@ public class WebappClassLoader
             // The policy file may have been modified to adjust
             // permissions, so we're reloading it when loading or
             // reloading a Context
-            Policy policy = Policy.getPolicy();
+            Policy policy = AuthorizationService.getPolicy();
             policy.refresh();
         } catch (AccessControlException e) {
             // Some policy files may restrict this, even for the core,
