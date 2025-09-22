@@ -508,8 +508,11 @@ public class ApplicationProcessor implements OASProcessor, ApiVisitor {
         }
         Parameter newParameter = new ParameterImpl();
         org.glassfish.hk2.classmodel.reflect.Parameter elementParam = (org.glassfish.hk2.classmodel.reflect.Parameter) element;
-        newParameter.setName(element.getAnnotation("jakarta.ws.rs.PathParam").getValue("value", String.class));
-
+        if (element.getAnnotation("jakarta.ws.rs.PathParam") != null) {
+            newParameter.setName(element.getAnnotation("jakarta.ws.rs.PathParam").getValue("value", String.class));
+        } else {
+          newParameter.setName(element.getName()); 
+        }
         SchemaImpl property = new SchemaImpl();
         property.setType(ModelUtils.getSchemaType(elementParam.getTypeName(), context));
         setPropertyValue(type, property, param);
