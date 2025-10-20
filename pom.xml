@@ -46,7 +46,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fish.payara.server</groupId>
     <artifactId>payara-aggregator</artifactId>
-    <version>6.2025.9</version>
+    <version>6.2025.10</version>
     <packaging>pom</packaging>
 
     <name>Payara Project</name>
@@ -206,13 +206,13 @@
     <properties>
         <!-- build versions -->
         <maven.clean.plugin.version>3.5.0</maven.clean.plugin.version>
-        <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
         <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
-        <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
         <maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
         <maven.release.plugin.version>3.1.1</maven.release.plugin.version>
-        <maven.dependency.plugin.version>3.8.1</maven.dependency.plugin.version>
+        <maven.dependency.plugin.version>3.9.0</maven.dependency.plugin.version>
         <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
         <maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
@@ -220,13 +220,13 @@
         <maven.javadoc.plugin.version>3.8.0</maven.javadoc.plugin.version>
         <maven.install.plugin.version>3.1.4</maven.install.plugin.version>
         <maven.bundle.plugin.version>5.1.9</maven.bundle.plugin.version>
-        <maven.failsafe.plugin.version>3.5.3</maven.failsafe.plugin.version>
+        <maven.failsafe.plugin.version>3.5.4</maven.failsafe.plugin.version>
         <maven.site.plugin.version>3.21.0</maven.site.plugin.version>
-        <maven.enforcer.plugin.version>3.6.1</maven.enforcer.plugin.version>
+        <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>
         <maven.build.helper.plugin.version>3.6.1</maven.build.helper.plugin.version>
-        <maven.flatten.plugin.version>1.7.2</maven.flatten.plugin.version>
+        <maven.flatten.plugin.version>1.7.3</maven.flatten.plugin.version>
         <dynamic-build-properties-maven-plugin.version>0.0.1.a2</dynamic-build-properties-maven-plugin.version>
-        <license-maven-plugin.version>2.6.0</license-maven-plugin.version>
+        <license-maven-plugin.version>2.7.0</license-maven-plugin.version>
 
         <!-- build settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -241,14 +241,14 @@
 
         <!-- BOM-referenced versions -->
         <osgi-resource-locator.version>1.0.3</osgi-resource-locator.version>
-        <snakeyaml.version>2.4</snakeyaml.version>
+        <snakeyaml.version>2.5</snakeyaml.version>
         <jakarta.servlet.jsp.jstl.version>3.0.1</jakarta.servlet.jsp.jstl.version>
         <mojarra.version>4.0.11.payara-p1</mojarra.version>
         <jaxb-extra-osgi.version>2.3.0</jaxb-extra-osgi.version>
         <jakarta.mvc.version>2.1.0</jakarta.mvc.version>
         <krazo.version>3.0.1</krazo.version>
         <yasson.version>3.0.4</yasson.version>
-        <eclipselink.version>4.0.1.payara-p4</eclipselink.version>
+        <eclipselink.version>4.0.7.payara-p1</eclipselink.version>
         <eclipselink.asm.version>9.8.0</eclipselink.asm.version>
         <openmq.version>6.5.1.payara-p1</openmq.version>
         <com.ibm.jbatch.container.version>2.1.1</com.ibm.jbatch.container.version>
@@ -260,7 +260,7 @@
         <woodstock-jsf-suntheme.version>5.0.0.payara-p1</woodstock-jsf-suntheme.version>
         <angus-activation.version>1.1.0</angus-activation.version>
         <istack-commons-runtime.version>4.2.0</istack-commons-runtime.version>
-        <jline.version>3.30.5</jline.version>
+        <jline.version>3.30.6</jline.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <microprofile-release.version>6.1</microprofile-release.version>
         <payara-arquillian-container.version>3.1</payara-arquillian-container.version>
@@ -282,14 +282,14 @@
         <expressly.version>5.0.0</expressly.version>
         <microprofile-config.version>3.1</microprofile-config.version>
         <parsson.version>1.1.5.payara-p1</parsson.version>
-        <jakarta.activation-api.version>2.1.3</jakarta.activation-api.version>
-        <jaxb-api.version>4.0.2</jaxb-api.version>
-        <jackson.version>2.19.2</jackson.version>
-        <jersey.version>3.1.10.payara-p1</jersey.version>
+        <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
+        <jaxb-api.version>4.0.4</jaxb-api.version>
+        <jackson.version>2.20.0</jackson.version>
+        <jersey.version>3.1.11.payara-p1</jersey.version>
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
         <hibernate.validator.version>8.0.1.Final.payara-p1</hibernate.validator.version>
         <hibernate.validator.osgi.version>8.0.1.Final</hibernate.validator.osgi.version>
-        <jaxb-impl.version>4.0.5</jaxb-impl.version>
+        <jaxb-impl.version>4.0.6</jaxb-impl.version>
         <jsonp-api.version>2.1.3</jsonp-api.version>
         <jakarta.security.auth.message-api.version>3.0.0</jakarta.security.auth.message-api.version>
         <jakarta.security.jacc-api.version>2.1.0</jakarta.security.jacc-api.version>
@@ -333,8 +333,8 @@
         <stax2-api.version>4.2.2</stax2-api.version>
         <stax-api.version>1.0-2</stax-api.version>
         <jbi.version>1.0</jbi.version>
-        <mail.version>2.1.3</mail.version>
-        <angus.mail.version>2.0.4</angus.mail.version>
+        <mail.version>2.1.5</mail.version>
+        <angus.mail.version>2.0.5</angus.mail.version>
         <opentelemetry.version>1.29.0</opentelemetry.version>
         <opentelemetry.alpha.version>1.29.0-alpha</opentelemetry.alpha.version>
         <jakarta.faces-api.version>4.0.1</jakarta.faces-api.version>
