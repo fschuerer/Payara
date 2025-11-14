@@ -10,12 +10,12 @@
     and Distribution License("CDDL") (collectively, the "License").  You
     may not use this file except in compliance with the License.  You can
     obtain a copy of the License at
-    https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
-    or packager/legal/LICENSE.txt.  See the License for the specific
+    https://github.com/payara/Payara/blob/main/LICENSE.txt
+    See the License for the specific
     language governing permissions and limitations under the License.
 
     When distributing the software, include this License Header Notice in each
-    file and include the License file at packager/legal/LICENSE.txt.
+    file and include the License file at legal/OPEN-SOURCE-LICENSE.txt.
 
     GPL Classpath Exception:
     Oracle designates this particular file as subject to the "Classpath"
@@ -46,7 +46,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fish.payara.server</groupId>
     <artifactId>payara-aggregator</artifactId>
-    <version>6.2025.10</version>
+    <version>6.2025.11</version>
     <packaging>pom</packaging>
 
     <name>Payara Project</name>
@@ -243,13 +243,13 @@
         <osgi-resource-locator.version>1.0.3</osgi-resource-locator.version>
         <snakeyaml.version>2.5</snakeyaml.version>
         <jakarta.servlet.jsp.jstl.version>3.0.1</jakarta.servlet.jsp.jstl.version>
-        <mojarra.version>4.0.11.payara-p1</mojarra.version>
+        <mojarra.version>4.0.11.payara-p2</mojarra.version>
         <jaxb-extra-osgi.version>2.3.0</jaxb-extra-osgi.version>
         <jakarta.mvc.version>2.1.0</jakarta.mvc.version>
         <krazo.version>3.0.1</krazo.version>
         <yasson.version>3.0.4</yasson.version>
         <eclipselink.version>4.0.7.payara-p1</eclipselink.version>
-        <eclipselink.asm.version>9.8.0</eclipselink.asm.version>
+        <eclipselink.asm.version>9.9.0</eclipselink.asm.version>
         <openmq.version>6.5.1.payara-p1</openmq.version>
         <com.ibm.jbatch.container.version>2.1.1</com.ibm.jbatch.container.version>
         <com.ibm.jbatch.spi.version>2.1.1</com.ibm.jbatch.spi.version>
@@ -268,7 +268,7 @@
         <concurro.version>3.0.2.payara-p1</concurro.version>
         <validation.xml.root>${project.build.outputDirectory}</validation.xml.root>
         <payara.security-connectors.version>3.1.2</payara.security-connectors.version>
-        <hk2.version>3.0.1.payara-p5</hk2.version>
+        <hk2.version>3.1.1.payara-p1</hk2.version>
         <osgi.version>8.0.0</osgi.version>
         <osgi.annotation.version>8.1.0</osgi.annotation.version>
         <osgi.enterprise.version>7.0.0</osgi.enterprise.version>
@@ -285,7 +285,7 @@
         <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
         <jaxb-api.version>4.0.4</jaxb-api.version>
         <jackson.version>2.20.0</jackson.version>
-        <jersey.version>3.1.11.payara-p1</jersey.version>
+        <jersey.version>3.1.11.payara-p2</jersey.version>
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
         <hibernate.validator.version>8.0.1.Final.payara-p1</hibernate.validator.version>
         <hibernate.validator.osgi.version>8.0.1.Final</hibernate.validator.osgi.version>
@@ -321,7 +321,7 @@
         <weld.version>5.1.6.Final</weld.version>
         <tyrus.version>2.1.5.payara-p2</tyrus.version>
         <jsp-impl.version>3.2.2</jsp-impl.version>
-        <asm.version>9.8</asm.version>
+        <asm.version>9.9</asm.version>
         <monitoring-console-api.version>2.0.2</monitoring-console-api.version>
         <websocket-api.version>2.1.1</websocket-api.version>
         <jax-rs-api.impl.version>3.1.0</jax-rs-api.impl.version>
@@ -639,7 +639,7 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>${license-maven-plugin.version}</version>
                     <configuration>
-                        <outputDirectory>${project.basedir}/appserver/packager/legal/src/main/resources/glassfish/legal</outputDirectory>
+                        <outputDirectory>${project.basedir}/appserver/packager/legal/src/main/resources/legal</outputDirectory>
                         <thirdPartyFilename>3RD-PARTY-LICENSE.txt</thirdPartyFilename>
                         <excludedGroups>fish.payara.*</excludedGroups>
                         <fileTemplate>appserver/packager/legal/src/main/resources/license-template.ftl</fileTemplate>
@@ -650,7 +650,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>xml-maven-plugin</artifactId>
-                    <version>1.1.0</version>
+                    <version>1.2.0</version>
                     <executions>
                         <execution>
                             <id>validate-xml-files</id>

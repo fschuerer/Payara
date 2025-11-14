@@ -13,7 +13,7 @@
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at glassfish/legal/LICENSE.txt.
+ * file and include the License file at legal/OPEN-SOURCE-LICENSE.txt.
  *
  * GPL Classpath Exception:
  * The Payara Foundation designates this particular file as subject to the "Classpath"
@@ -71,6 +71,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import static java.util.logging.Level.FINE;
@@ -81,11 +82,18 @@ import java.util.stream.Collectors;
 
 import fish.payara.microprofile.openapi.util.BeanValidationType;
 import jakarta.validation.groups.Default;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response.Status;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.eclipse.microprofile.openapi.models.Components;
 import org.eclipse.microprofile.openapi.models.ExternalDocumentation;
@@ -184,9 +192,6 @@ public class ApplicationProcessor implements OASProcessor, ApiVisitor {
         operation.setOperationId(element.getName());
         operation.setMethod(HttpMethod.GET);
 
-        // Add the default request
-        insertDefaultRequestBody(context, operation, element);
-
         // Add the default response
         insertDefaultResponse(context, operation, element);
     }
@@ -249,9 +254,6 @@ public class ApplicationProcessor implements OASProcessor, ApiVisitor {
         pathItem.setDELETE(operation);
         operation.setOperationId(element.getName());
         operation.setMethod(HttpMethod.DELETE);
-
-        // Add the default request
-        insertDefaultRequestBody(context, operation, element);
 
         // Add the default response
         insertDefaultResponse(context, operation, element);
@@ -506,18 +508,42 @@ public class ApplicationProcessor implements OASProcessor, ApiVisitor {
         if (isSchemaHidden(element)) {
             return;
         }
-        Parameter newParameter = new ParameterImpl();
+
         org.glassfish.hk2.classmodel.reflect.Parameter elementParam = (org.glassfish.hk2.classmodel.reflect.Parameter) element;
-        if (element.getAnnotation("jakarta.ws.rs.PathParam") != null) {
-            newParameter.setName(element.getAnnotation("jakarta.ws.rs.PathParam").getValue("value", String.class));
-        } else {
-          newParameter.setName(element.getName()); 
-        }
         SchemaImpl property = new SchemaImpl();
         property.setType(ModelUtils.getSchemaType(elementParam.getTypeName(), context));
         setPropertyValue(type, property, param);
-        newParameter.setSchema(property);
-        mergeParameter(context, newParameter);
+
+        AnnotationModel pathParam = elementParam.getAnnotation(PathParam.class.getName());
+        AnnotationModel queryParam = elementParam.getAnnotation(QueryParam.class.getName());
+        AnnotationModel headerParam = elementParam.getAnnotation(HeaderParam.class.getName());
+
+        AnnotationModel selectedParam = Stream.of(pathParam, queryParam, headerParam)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+
+        if (selectedParam != null) {
+            Parameter newParameter = new ParameterImpl();
+            newParameter.setName(selectedParam.getValue("value", String.class));
+            newParameter.setSchema(property);
+            mergeParameter(context, newParameter);
+            return;
+        }
+
+
+        if (elementParam.getMethod().getAnnotation(GET.class.getName()) != null || elementParam.getMethod().getAnnotation(DELETE.class.getName()) != null) {
+            //GET and DELETE methods cannot have a request body, parameters should be passed via query/path param.
+            return;
+        }
+
+        if (context.getWorkingOperation() == null) {
+            return;
+        }
+
+        for (MediaType value: context.getWorkingOperation().getRequestBody().getContent().getMediaTypes().values()) {
+            SchemaImpl.merge(property, value.getSchema(), false, context);
+        }
     }
 
     private void addSchemaProperty(AnnotationModel param, AnnotatedElement element, ApiContext context, BeanValidationType type) {
@@ -1476,8 +1502,7 @@ public class ApplicationProcessor implements OASProcessor, ApiVisitor {
     }
 
     // PRIVATE METHODS
-    private RequestBody insertDefaultRequestBody(ApiContext context,
-            Operation operation, MethodModel method) {
+    private RequestBody insertDefaultRequestBody(ApiContext context, Operation operation, MethodModel method) {
         RequestBody requestBody = new RequestBodyImpl();
 
         // Get the request body type of the method
