@@ -41,7 +41,7 @@ package fish.payara.microprofile.jwtauth.cdi;
 
 import fish.payara.microprofile.jwtauth.eesecurity.JWTAuthenticationMechanism;
 import fish.payara.microprofile.jwtauth.eesecurity.SignedJWTIdentityStore;
-import fish.payara.microprofile.jwtauth.eesecurity.SignedJWTIdentityStoreMutliIssuers;
+import fish.payara.microprofile.jwtauth.eesecurity.SignedJWTIdentityStoreMultiIssuers;
 import fish.payara.microprofile.jwtauth.jwt.ClaimAnnotationLiteral;
 import fish.payara.microprofile.jwtauth.jwt.ClaimValueImpl;
 import fish.payara.microprofile.jwtauth.jwt.JWTInjectableType;
@@ -98,14 +98,15 @@ public class CdiInitEventHandler {
                 .types(Object.class, IdentityStore.class, SignedJWTIdentityStore.class)
                 .addToId("store " + LoginConfig.class)
                 .create(e -> new SignedJWTIdentityStore()));
-        
+
         afterBeanDiscovery.addBean(new PayaraCdiProducer<IdentityStore>()
                 .scope(ApplicationScoped.class)
                 .beanClass(IdentityStore.class)
-                .types(Object.class, IdentityStore.class, SignedJWTIdentityStore.class, SignedJWTIdentityStoreMutliIssuers.class)
+                .types(Object.class, IdentityStore.class, SignedJWTIdentityStore.class,
+                        SignedJWTIdentityStoreMultiIssuers.class)
                 .addToId("storemulti " + LoginConfig.class)
-                .create(e -> new SignedJWTIdentityStoreMutliIssuers()));
-           
+                .create(e -> new SignedJWTIdentityStoreMultiIssuers()));
+
         afterBeanDiscovery.addBean(new PayaraCdiProducer<HttpAuthenticationMechanism>()
                 .scope(ApplicationScoped.class)
                 .beanClass(HttpAuthenticationMechanism.class)
@@ -124,7 +125,8 @@ public class CdiInitEventHandler {
         // MP-JWT 1.0 7.1.2
         for (JWTInjectableType injectableType : computeTypes()) {
 
-            // Add a new Bean<T>/Dynamic producer for each type that 7.1.2 asks us to support.
+            // Add a new Bean<T>/Dynamic producer for each type that 7.1.2 asks us to
+            // support.
 
             afterBeanDiscovery.addBean(new PayaraCdiProducer<>()
                     .scope(Dependent.class)
@@ -138,7 +140,8 @@ public class CdiInitEventHandler {
                         Claim claim = getQualifier(
                                 getCurrentInjectionPoint(
                                         CdiUtils.getBeanManager(),
-                                        (CreationalContext) creationalContext), Claim.class);
+                                        (CreationalContext) creationalContext),
+                                Claim.class);
 
                         String claimName = getClaimName(claim);
 
@@ -162,7 +165,8 @@ public class CdiInitEventHandler {
     }
 
     private static Object loadClaimObject(JWTInjectableType injectableType, String claimNameParam) {
-        // Obtain the raw named value from the request scoped JsonWebToken's embedded claims and
+        // Obtain the raw named value from the request scoped JsonWebToken's embedded
+        // claims and
         // convert it according to the target type for which this Bean<T> was created.
         Object claimObj = injectableType.convert(
                 getJsonWebToken().getClaims()
@@ -198,17 +202,20 @@ public class CdiInitEventHandler {
         Set<JWTInjectableType> claimValueTypes = new HashSet<>(optionalTypes);
         claimValueTypes.addAll(
                 optionalTypes.stream()
-                        .map(t -> new JWTInjectableType(new ParameterizedTypeImpl(ClaimValue.class, t.getFullType()), t))
+                        .map(t -> new JWTInjectableType(new ParameterizedTypeImpl(ClaimValue.class, t.getFullType()),
+                                t))
                         .collect(toSet()));
 
         return claimValueTypes;
     }
 
-    public static InjectionPoint getCurrentInjectionPoint(BeanManager beanManager, CreationalContext<?> creationalContext) {
+    public static InjectionPoint getCurrentInjectionPoint(BeanManager beanManager,
+            CreationalContext<?> creationalContext) {
         Bean<InjectionPointGenerator> bean = resolve(beanManager, InjectionPointGenerator.class);
 
         return bean != null
-                ? (InjectionPoint) beanManager.getInjectableReference(bean.getInjectionPoints().iterator().next(), creationalContext)
+                ? (InjectionPoint) beanManager.getInjectableReference(bean.getInjectionPoints().iterator().next(),
+                        creationalContext)
                 : null;
     }
 

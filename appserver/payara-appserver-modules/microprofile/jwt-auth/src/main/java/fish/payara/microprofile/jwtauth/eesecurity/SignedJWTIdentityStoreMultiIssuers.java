@@ -33,14 +33,14 @@ import jakarta.security.enterprise.identitystore.CredentialValidationResult;
  *
  * @author XLKAFR
  */
-public class SignedJWTIdentityStoreMutliIssuers extends SignedJWTIdentityStore {
+public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
 
-    private static final Logger LOGGER = Logger.getLogger(SignedJWTIdentityStoreMutliIssuers.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SignedJWTIdentityStoreMultiIssuers.class.getName());
 
     protected List<String> acceptedIssuers;
     protected Map<String, JwtPublicKeyStore> issuer2PublicKeyStore;
 
-    public SignedJWTIdentityStoreMutliIssuers() {
+    public SignedJWTIdentityStoreMultiIssuers() {
 
         Config config = ConfigProvider.getConfig();
         issuer2PublicKeyStore = new HashMap<>();
@@ -56,7 +56,7 @@ public class SignedJWTIdentityStoreMutliIssuers extends SignedJWTIdentityStore {
             Optional<Properties> properties = readVendorProperties();
             String jwksUri = getJwksUri(issuer);
             if (jwksUri != null) {
-                var ks = new JwtPublicKeyStore(readPublicKeyCacheTTL(properties), Optional.of(jwksUri));
+                var ks = new JwtPublicKeyStore(readPublicKeyCacheTTL(properties), readKeyCacheRetainOnErrorDuration(properties), Optional.of(jwksUri));
                 issuer2PublicKeyStore.put(issuer, ks);
             }
         }
@@ -105,11 +105,15 @@ public class SignedJWTIdentityStoreMutliIssuers extends SignedJWTIdentityStore {
                     if (config.containsKey("jwks_uri")) {
                         jwksUri = config.getString("jwks_uri");
                     } else {
-                        LOGGER.log(Level.SEVERE, "Property 'jwks_uri' not found in openid-configuration from Issuer: {0}", providerConfigurationURI.toString());
+                        LOGGER.log(Level.SEVERE,
+                                "Property 'jwks_uri' not found in openid-configuration from Issuer: {0}",
+                                providerConfigurationURI.toString());
                     }
-                };
+                }
+                ;
             } else {
-                LOGGER.log(Level.SEVERE, "Cannot load openid-configuration from Issuer: {0} status code: {1}", new Object[]{providerConfigurationURI.toString(), response.statusCode()});
+                LOGGER.log(Level.SEVERE, "Cannot load openid-configuration from Issuer: {0} status code: {1}",
+                        new Object[] { providerConfigurationURI.toString(), response.statusCode() });
             }
         } catch (URISyntaxException | IOException | InterruptedException ex) {
             LOGGER.log(Level.SEVERE, "Error loading public certificate from Issuer " + issuer, ex);

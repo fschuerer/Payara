@@ -184,7 +184,7 @@ public class SignedJWTIdentityStore implements IdentityStore {
         		.orElseGet( () -> Duration.ofMinutes(5));
     }
 
-    private Duration readKeyCacheRetainOnErrorDuration(Optional<Properties> properties) {
+    protected Duration readKeyCacheRetainOnErrorDuration(Optional<Properties> properties) {
         return properties
                 .map(props -> props.getProperty("publicKey.cache.retain-on-error-duration"))
                 .map(Long::valueOf)
