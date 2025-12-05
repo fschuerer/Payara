@@ -33,14 +33,14 @@ import jakarta.security.enterprise.identitystore.CredentialValidationResult;
  *
  * @author XLKAFR
  */
-public class SignedJWTIdentityStoreMutliIssuers extends SignedJWTIdentityStore {
+public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
 
-    private static final Logger LOGGER = Logger.getLogger(SignedJWTIdentityStoreMutliIssuers.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SignedJWTIdentityStoreMultiIssuers.class.getName());
 
     protected List<String> acceptedIssuers;
     protected Map<String, JwtPublicKeyStore> issuer2PublicKeyStore;
 
-    public SignedJWTIdentityStoreMutliIssuers() {
+    public SignedJWTIdentityStoreMultiIssuers() {
 
         Config config = ConfigProvider.getConfig();
         issuer2PublicKeyStore = new HashMap<>();
