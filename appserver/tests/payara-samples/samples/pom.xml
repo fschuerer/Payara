@@ -45,7 +45,7 @@
     <parent>
         <groupId>fish.payara.samples</groupId>
         <artifactId>payara-samples</artifactId>
-        <version>7.2025.1</version>
+        <version>7.2025.2</version>
     </parent>
 
     <artifactId>payara-samples-profiled-tests</artifactId>
@@ -92,6 +92,7 @@
         <module>mvc</module>
         <module>data</module>
         <module>versioned-deployment</module>
+        <module>microprofile-jwt-error-cache</module>
     </modules>
 
     <dependencyManagement>

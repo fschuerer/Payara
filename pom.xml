@@ -46,7 +46,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fish.payara.server</groupId>
     <artifactId>payara-aggregator</artifactId>
-    <version>7.2025.1</version>
+    <version>7.2025.2</version>
     <packaging>pom</packaging>
 
     <name>Payara Project</name>
@@ -306,9 +306,8 @@
         <parsson.version>1.1.5.payara-p1</parsson.version>
         <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
         <jaxb-api.version>4.0.4</jaxb-api.version>
-        <jackson.version>2.20.0</jackson.version>
-        <!-- Pending port of FISH-11911 -->
-        <jersey.version>4.0.0-M2.payara-p1</jersey.version>
+        <jackson.version>2.20.1</jackson.version>
+        <jersey.version>4.0.0.payara-p1</jersey.version>
         <jakarta.validation.version>3.1.1</jakarta.validation.version>
         <jakarta.validation.osgi.version>3.1</jakarta.validation.osgi.version>
         <jakarta.validation.osgi.version.upperbound>4</jakarta.validation.osgi.version.upperbound>

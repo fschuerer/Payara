@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2019 Payara Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025 Payara Foundation and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -37,29 +37,15 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.samples.asadmin;
+package fish.payara.samples;
 
-import org.glassfish.embeddable.CommandResult;
-import org.junit.Test;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
+import org.eclipse.microprofile.auth.LoginConfig;
 
-/**
- * Verifies the correctness of the {@code ListHealthCheckServices} command.
- */
-public class ListHealthCheckServicesTest extends AsadminTest {
-
-    @Test
-    public void listHealthCheckServices() {
-        CommandResult result = asadmin("list-healthcheck-services");
-        assertSuccess(result);
-        String description = result.getOutput();
-        assertContains("Available Health Check Services:", description);
-        assertContains("healthcheck-mp", description);
-        assertContains("healthcheck-cpu", description);
-        assertContains("healthcheck-gc", description);
-        assertContains("healthcheck-heap", description);
-        assertContains("healthcheck-threads", description);
-        assertContains("healthcheck-machinemem", description);
-        assertContains("healthcheck-cpool", description);
-        assertContains("healthcheck-stuck", description);
-    }
+@ApplicationScoped
+@ApplicationPath("/")
+@LoginConfig(authMethod = "MP-JWT", realmName = "test")
+public class ApplicationInit extends Application {
 }

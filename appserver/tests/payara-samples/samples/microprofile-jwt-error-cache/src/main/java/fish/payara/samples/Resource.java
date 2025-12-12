@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2019-2020 Payara Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025 Payara Foundation and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -37,51 +37,31 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.samples.asadmin;
+package fish.payara.samples;
 
-import fish.payara.nucleus.hazelcast.HazelcastRuntimeConfiguration;
-import fish.payara.samples.Unstable;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 
-import org.glassfish.embeddable.CommandResult;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 
-/**
- * Verifies the correctness of the {@code SetHazelcastConfiguration} command.
- */
-@Category(Unstable.class)
-// Fails from two reasons:
-// 1) Requires completely new domain. Side effects of other tests break this one.
-// 2) On JDK8 fails because of usage of @Category annotation which has problems with
-//    this bug: https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8209742 (fixed in JDK11)
-public class SetHazelcastConfigurationTest extends AsadminTest {
+@ApplicationScoped
+@Path("/resource")
+@Produces(TEXT_PLAIN)
+public class Resource {
 
-    private HazelcastRuntimeConfiguration config;
-
-    @Before
-    public void setUp() {
-        config = getDomainExtensionByType(HazelcastRuntimeConfiguration.class);
+    @GET
+    @Path("/protected")
+    @RolesAllowed("architect")
+    public String protectedResource() {
+        return "This is a protected resource";
     }
-
-
-    @Test
-    public void autoIncrementPort() {
-        CommandResult result = asadmin("set-hazelcast-configuration", "--autoIncrementPort", "true");
-        assertSuccess(result);
-        assertTrue(config.getAutoIncrementPort());
-        result = asadmin("set-hazelcast-configuration", "--autoIncrementPort", "false");
-        assertSuccess(result);
-        assertFalse(config.getAutoIncrementPort());
-    }
-
-
-    @Test
-    public void dataGridEncryptionWarning() {
-        CommandResult result = asadmin("set-hazelcast-configuration", "--encryptdatagrid", "true");
-        assertWarning(result);
-        assertContains("Could not find datagrid-key", result.getOutput());
-        result = asadmin("set-hazelcast-configuration", "--encryptdatagrid", "false");
-        assertSuccess(result);
+    
+    @GET
+    @Path("/public")
+    public String publicResource() {
+        return "This is a public resource";
     }
 }
