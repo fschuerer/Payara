@@ -46,7 +46,6 @@ import jakarta.security.jacc.PolicyFactory;
 import org.glassfish.appclient.client.acc.AppClientContainer;
 import org.glassfish.appclient.client.acc.JWSACCClassLoader;
 import org.glassfish.appclient.common.Util;
-import org.glassfish.exousia.AuthorizationService;
 
 import javax.swing.SwingUtilities;
 import java.io.*;

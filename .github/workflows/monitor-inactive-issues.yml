@@ -38,9 +38,11 @@ jobs:
     steps:
       - name: Notify MS Teams channel
         id: notify-ms-teams
-        uses: tlolkema/simple-teams-message@main
+        uses: simbo/msteams-message-card-action@latest
         with:
           webhook: ${{ secrets.COMMUNITY_EVENTS_WEBHOOK_URL }}
-          message_title: Inactive Issue Detected
-          message_description: "It's been ${{ env.inactiveIntervalDays }} days since issue number ${{ matrix.issues.number }} has received an update."
-          extra_text_blocks: "${{ matrix.issues.assignee }}, please provide an update soon."
+          title: Inactive Issue Detected
+          message: |
+            It's been <i>${{ env.inactiveIntervalDays }} days</i> since issue number <code>${{ matrix.issues.number }}</code> has received an update. <strong>${{ matrix.issues.assignee }}</strong>, please provide an update soon.
+          buttons: |
+            View Issue on GitHub ${{ matrix.issues.url }}

@@ -245,7 +245,7 @@
                             <artifact>
                                 <groupId>jakarta.authorization</groupId>
                                 <artifactId>jakarta.authorization-api</artifactId>
-                                <version>${jakarta.security.jacc-api.version}</version>
+                                <version>${jakarta.authorization-api.version}</version>
                             </artifact>
                             <nonFinal>false</nonFinal>
                             <jarType>api</jarType>
@@ -259,7 +259,7 @@
                             <artifact>
                                 <groupId>jakarta.authentication</groupId>
                                 <artifactId>jakarta.authentication-api</artifactId>
-                                <version>${jakarta.security.auth.message-api.version}</version>
+                                <version>${jakarta.authentication-api.version}</version>
                             </artifact>
                             <nonFinal>false</nonFinal>
                             <jarType>api</jarType>

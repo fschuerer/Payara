@@ -61,7 +61,6 @@ import com.sun.enterprise.security.SecurityRoleMapperFactoryGen;
 import com.sun.enterprise.security.util.IASSecurityException;
 import com.sun.enterprise.util.LocalStringManagerImpl;
 import com.sun.logging.LogDomains;
-import org.glassfish.exousia.AuthorizationService;
 
 /**
  * This utility class contains Jakarta Authorization related utilities.

@@ -82,7 +82,6 @@ import org.glassfish.api.deployment.InstrumentableClassLoader;
 import org.glassfish.api.deployment.ResourceClassLoader;
 import org.glassfish.api.deployment.ResourceEntry;
 import org.glassfish.common.util.InstanceCounter;
-import org.glassfish.exousia.AuthorizationService;
 import org.glassfish.hk2.api.PreDestroy;
 import org.glassfish.web.util.ExceptionUtils;
 import org.glassfish.web.util.IntrospectionUtils;

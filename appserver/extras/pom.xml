@@ -110,6 +110,7 @@
             </activation>
             <modules>
                 <module>embedded</module>
+                <module>docker-images</module>
             </modules>
         </profile>
     </profiles>
