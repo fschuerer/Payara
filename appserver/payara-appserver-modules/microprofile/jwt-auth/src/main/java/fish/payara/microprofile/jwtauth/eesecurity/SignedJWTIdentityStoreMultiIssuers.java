@@ -56,7 +56,7 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
             Optional<Properties> properties = readVendorProperties();
             String jwksUri = getJwksUri(issuer);
             if (jwksUri != null) {
-                var ks = new JwtPublicKeyStore(readPublicKeyCacheTTL(properties), Optional.of(jwksUri));
+                var ks = new JwtPublicKeyStore(readPublicKeyCacheTTL(properties), readKeyCacheRetainOnErrorDuration(properties), Optional.of(jwksUri));
                 issuer2PublicKeyStore.put(issuer, ks);
             }
         }

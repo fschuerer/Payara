@@ -44,8 +44,11 @@ import fish.payara.microprofile.jwtauth.jwt.JwtTokenParser;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import jakarta.security.enterprise.identitystore.IdentityStore;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.jwt.config.Names;
+
 import java.io.IOException;
-import static java.lang.Thread.currentThread;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
@@ -57,11 +60,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import static java.util.logging.Level.INFO;
 import java.util.logging.Logger;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
-import org.eclipse.microprofile.jwt.config.Names;
+
+import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
+import static java.lang.Thread.currentThread;
+import static java.util.logging.Level.INFO;
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 
 /**
@@ -184,7 +187,7 @@ public class SignedJWTIdentityStore implements IdentityStore {
         		.orElseGet( () -> Duration.ofMinutes(5));
     }
 
-    private Duration readKeyCacheRetainOnErrorDuration(Optional<Properties> properties) {
+    protected Duration readKeyCacheRetainOnErrorDuration(Optional<Properties> properties) {
         return properties
                 .map(props -> props.getProperty("publicKey.cache.retain-on-error-duration"))
                 .map(Long::valueOf)
