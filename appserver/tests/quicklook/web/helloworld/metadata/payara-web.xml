@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
@@ -39,10 +40,14 @@
     holder.
 
 -->
+<!-- Portions Copyright 2026 Payara Foundation and/or its affiliates -->
 
-<!-- javaConfig/serverInstProfiler.jsf -->
+<!DOCTYPE payara-web-app PUBLIC "-//Payara.fish//DTD Payara Server 4 Servlet 3.0//EN" "https://docs.payara.fish/schemas/payara-web-app_4.dtd">
+<payara-web-app>
+  <session-config>
+    <session-manager/>
+  </session-config>
+  <class-loader delegate="true"/>
+  <jsp-config/>
+</payara-web-app>
 
-
-#include "/common/javaConfig/jvmProfiler_1.inc"
-#include "/common/javaConfig/javaConfigTabs.inc"
-#include "/common/javaConfig/jvmProfiler_2.inc"
