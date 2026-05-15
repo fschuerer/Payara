@@ -37,7 +37,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-// Portions Copyright [2016-2025] [Payara Foundation and/or its affiliates]
+// Portions Copyright 2016-2026 Payara Foundation and/or its affiliates
 
 package org.glassfish.ejb.startup;
 
@@ -67,8 +67,6 @@ import org.glassfish.ejb.deployment.descriptor.EjbDescriptor;
 import org.glassfish.ejb.security.application.EJBSecurityManager;
 import org.glassfish.ejb.security.application.EjbSecurityProbeProvider;
 import org.glassfish.ejb.security.factory.EJBSecurityManagerFactory;
-import org.glassfish.ejb.spi.CMPDeployer;
-import org.glassfish.ejb.spi.CMPService;
 import org.glassfish.hk2.api.PostConstruct;
 import org.glassfish.internal.api.ServerContext;
 import org.glassfish.internal.data.ApplicationInfo;
@@ -126,7 +124,6 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
     StartupContext startupContext;
 
     private Object lock = new Object();
-    private volatile CMPDeployer cmpDeployer = null;
 
     private static SecureRandom random = new SecureRandom();
 
@@ -142,15 +139,6 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
 
     private final EjbSecurityProbeProvider probeProvider = new EjbSecurityProbeProvider();
 
-    @Inject
-    Provider<RegisteredComponentInvocationHandler> registeredComponentInvocationHandlerProvider;
-
-    @Inject
-    Provider<CMPService> cmpServiceProvider;
-
-    @Inject
-    Provider<CMPDeployer> cmpDeployerProvider;
-
     /**
      * Constructor
      */
@@ -161,16 +149,6 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
 
     @Override
     public void postConstruct() {
-        Properties arguments = startupContext.getArguments();
-        if (arguments != null) {
-            boolean isUpgrade = Boolean.valueOf(arguments.getProperty("-upgrade"));
-            if (isUpgrade) {
-                // we don't want to register this listener for the upgrade
-                // start up
-                return;
-            }
-        }
-
         events.register(this);
     }
 
@@ -254,15 +232,6 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
         ejbBundle.setClassLoader(dc.getClassLoader());
         ejbBundle.setupDataStructuresForRuntime();
 
-        if (ejbBundle.containsCMPEntity()) {
-            CMPService cmpService = cmpServiceProvider.get();
-            if (cmpService == null) {
-                throw new RuntimeException("CMP Module is not available");
-            } else if (!cmpService.isReady()) {
-                throw new RuntimeException("CMP Module is not initialized");
-            }
-        }
-
         EjbApplication ejbApp = new EjbApplication(ejbBundle, dc, dc.getClassLoader(), habitat);
 
         try {
@@ -308,13 +277,6 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
             _logger.log(Level.WARNING, "Error unbinding ejb bundle " + ejbBundle.getModuleName() + " dependency namespace", e);
         }
 
-        if (ejbBundle.containsCMPEntity()) {
-            initCMPDeployer();
-            if (cmpDeployer != null) {
-                cmpDeployer.unload(ejbBundle.getClassLoader());
-            }
-        }
-
         // All the other work is done in EjbApplication.
 
     }
@@ -332,11 +294,6 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
 
         OpsParams params = dc.getCommandParameters(OpsParams.class);
         if ((params.origin.isUndeploy() || params.origin.isDeploy()) && isDas()) {
-
-            // If CMP beans are present, cmpDeployer should've been initialized in unload()
-            if (cmpDeployer != null) {
-                cmpDeployer.clean(dc);
-            }
 
             long uniqueAppId = getApplicationFromApplicationInfo(params.name()).getUniqueId();
             try {
@@ -430,11 +387,10 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
             return;
         }
 
-        EjbBundleDescriptorImpl bundle = dc.getModuleMetaData(EjbBundleDescriptorImpl.class);
 
         DeployCommandParameters dcp = dc.getCommandParameters(DeployCommandParameters.class);
         boolean generateRmicStubs = dcp.generatermistubs;
-        dc.addTransientAppMetaData(CMPDeployer.MODULE_CLASSPATH, getModuleClassPath(dc));
+        dc.addTransientAppMetaData("org.glassfish.ejb.spi.module.classpath", getModuleClassPath(dc));
         if (generateRmicStubs) {
             StaticRmiStubGenerator staticStubGenerator = new StaticRmiStubGenerator(habitat);
             try {
@@ -443,17 +399,7 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
                 throw new DeploymentException("Static RMI-IIOP Stub Generation exception for " + dc.getSourceDir(), e);
             }
         }
-
-        if (bundle == null || !bundle.containsCMPEntity()) {
-            // bundle WAS null in a war file where we do not support CMPs
-            return;
-        }
-
-        initCMPDeployer();
-        if (cmpDeployer == null) {
-            throw new DeploymentException("No CMP Deployer is available to deploy this module");
-        }
-        cmpDeployer.deploy(dc);
+        return;
 
     }
 
@@ -638,14 +584,6 @@ public class EjbDeployer extends JavaEEDeployer<EjbContainerStarter, EjbApplicat
         // id that was used the last time the server ran.
 
         return next << 16;
-    }
-
-    private void initCMPDeployer() {
-        if (cmpDeployer == null) {
-            synchronized (lock) {
-                cmpDeployer = cmpDeployerProvider.get();
-            }
-        }
     }
 
     /**

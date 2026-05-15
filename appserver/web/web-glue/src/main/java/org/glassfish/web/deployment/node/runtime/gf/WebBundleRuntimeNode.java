@@ -37,7 +37,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-// Portions Copyright [2016-2019] [Payara Foundation and/or its affiliates]
+// Portions Copyright 2016-2026 Payara Foundation and/or its affiliates
 package org.glassfish.web.deployment.node.runtime.gf;
 
 import static com.sun.enterprise.deployment.xml.RuntimeTagNames.PAYARA_JAXRS_ROLES_ALLOWED_ENABLED;
@@ -55,7 +55,6 @@ import org.glassfish.web.deployment.node.WebBundleNode;
 import org.glassfish.web.deployment.runtime.Cache;
 import org.glassfish.web.deployment.runtime.ClassLoader;
 import org.glassfish.web.deployment.runtime.JspConfig;
-import org.glassfish.web.deployment.runtime.LocaleCharsetInfo;
 import org.glassfish.web.deployment.runtime.Servlet;
 import org.glassfish.web.deployment.runtime.SessionConfig;
 import org.glassfish.web.deployment.runtime.SunWebAppImpl;
@@ -97,6 +96,7 @@ import java.util.Collections;
  * @author Jerome Dochez
  * @version
  */
+@Deprecated // When we remove support for sun-web.xml files, we should roll all of this into PayaraWebBundleRuntimeNode (or vice versa)
 public class WebBundleRuntimeNode extends RuntimeBundleNode<WebBundleDescriptorImpl> {
 
     /**
@@ -141,8 +141,6 @@ public class WebBundleRuntimeNode extends RuntimeBundleNode<WebBundleDescriptorI
         registerElementHandler(new XMLElement(RuntimeTagNames.CLASS_LOADER), ClassLoaderNode.class);
 
         registerElementHandler(new XMLElement(RuntimeTagNames.JSP_CONFIG), JspConfigRuntimeNode.class);
-
-        registerElementHandler(new XMLElement(RuntimeTagNames.LOCALE_CHARSET_INFO), LocaleCharsetInfoNode.class);
 
         registerElementHandler(new XMLElement(RuntimeTagNames.PROPERTY), WebPropertyNode.class);
 
@@ -264,8 +262,6 @@ public class WebBundleRuntimeNode extends RuntimeBundleNode<WebBundleDescriptorI
             sunWebApp.setClassLoader((ClassLoader) newDescriptor);
         } else if (newDescriptor instanceof JspConfig) {
             sunWebApp.setJspConfig((JspConfig) newDescriptor);
-        } else if (newDescriptor instanceof LocaleCharsetInfo) {
-            sunWebApp.setLocaleCharsetInfo((LocaleCharsetInfo) newDescriptor);
         } else if (newDescriptor instanceof WebProperty) {
             sunWebApp.addWebProperty((WebProperty) newDescriptor);
         } else if (newDescriptor instanceof Valve) {
@@ -456,12 +452,6 @@ public class WebBundleRuntimeNode extends RuntimeBundleNode<WebBundleDescriptorI
             WebPropertyNode propertyNode = new WebPropertyNode();
             Node jspConfig = appendChild(web, RuntimeTagNames.JSP_CONFIG);
             propertyNode.writeDescriptor(jspConfig, RuntimeTagNames.PROPERTY, sunWebApp.getJspConfig().getWebProperty());
-        }
-
-        // locale-charset-info?
-        if (sunWebApp.getLocaleCharsetInfo() != null) {
-            LocaleCharsetInfoNode localeNode = new LocaleCharsetInfoNode();
-            localeNode.writeDescriptor(web, RuntimeTagNames.LOCALE_CHARSET_INFO, sunWebApp.getLocaleCharsetInfo());
         }
 
         // parameter-encoding?
