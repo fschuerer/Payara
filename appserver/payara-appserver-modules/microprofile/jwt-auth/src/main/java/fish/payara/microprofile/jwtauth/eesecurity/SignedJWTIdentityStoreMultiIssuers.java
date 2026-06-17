@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,7 +74,8 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
                 SignedJWT jwt = SignedJWT.parse(signedJWTCredential.getSignedJWT());
                 String issuer = jwt.getJWTClaimsSet().getIssuer();
                 if (!acceptedIssuers.contains(issuer)) {
-                    return CredentialValidationResult.NOT_VALIDATED_RESULT;
+                    // let the original implementation do the work
+                    return super.validate(signedJWTCredential);
                 }
 
                 setAcceptedIssuer(issuer);
@@ -82,6 +84,7 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
         }
+        // the validation will do the original impplementation
         return super.validate(signedJWTCredential);
     }
 
@@ -115,5 +118,11 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
             LOGGER.log(Level.SEVERE, "Error loading public certificate from Issuer " + issuer, ex);
         }
         return jwksUri;
+    }
+
+    /* We will be called directly, and the fork then calls the original implementation */
+    @Override
+    public Set<ValidationType> validationTypes() {
+        return DEFAULT_VALIDATION_TYPES;
     }
 }

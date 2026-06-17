@@ -54,6 +54,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -229,5 +230,15 @@ public class SignedJWTIdentityStore implements IdentityStore {
 
     public void setPublicKeyStore(JwtPublicKeyStore publicKeyStore) {
         this.publicKeyStore = publicKeyStore;
+    }
+    
+    /*
+     * All implementation of IdentityStore are searched, sorted by priority and filtered by the supported validation types. 
+     * Only the fork should be call directly,
+     * and the fork then calls the original implementation
+     */
+    @Override
+    public Set<ValidationType> validationTypes() {
+        return Collections.emptySet();
     }
 }
