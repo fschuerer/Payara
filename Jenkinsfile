@@ -69,9 +69,7 @@ pipeline {
                         retry(3)
                     }
                     steps {
-
                         processPayaraArtifacts(buildId)
-
                         setupDomain()
 
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running test  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
@@ -87,8 +85,10 @@ pipeline {
                     }
                     post {
                         always {
-                            junit 'appserver/tests/quicklook/test-output/QuickLookTests/*.xml'
                             stopDomain()
+                        }
+                        success {
+                            junit 'appserver/tests/quicklook/test-output/QuickLookTests/*.xml'
                         }
                         cleanup {
                             saveLogsAndCleanup 'quicklook-log.zip'
@@ -103,7 +103,6 @@ pipeline {
                         retry(3)
                     }
                     steps {
-
                         processPayaraArtifacts(buildId, true)
                         setupDomain()
 
@@ -118,7 +117,10 @@ pipeline {
                     }
                     post {
                         always {
-                            processReportAndStopDomain()
+                            stopDomain()
+                        }
+                        success {
+                            junit '**/target/*-reports/*.xml'
                         }
                         cleanup {
                             saveLogsAndCleanup 'samples-log.zip'
@@ -131,18 +133,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP Config TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: "Build"),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'Config'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: "Build"),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'Config'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP Config TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -152,18 +152,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP Fault Tolerance TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: 'Build'),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'Fault-Tolerance'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: 'Build'),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'Fault-Tolerance'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP Fault Tolerance TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -173,18 +171,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP Health TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: 'Build'),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'Health'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: 'Build'),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'Health'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP Health TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -194,18 +190,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP JWT Auth TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: 'Build'),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'JWT-Auth'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: 'Build'),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'JWT-Auth'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP JWT Auth TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -215,18 +209,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP Metrics TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: 'Build'),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'Metrics'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: 'Build'),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'Metrics'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP Metrics TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -236,18 +228,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP OpenAPI TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: 'Build'),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'OpenAPI'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: 'Build'),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'OpenAPI'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP OpenAPI TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -257,18 +247,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP OpenTelemetry Tracing TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: 'Build'),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'OpenTelemetry-Tracing'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: 'Build'),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'OpenTelemetry-Tracing'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP OpenTelemetry Tracing TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -278,18 +266,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP OpenTracing TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: 'Build'),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'OpenTracing'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: 'Build'),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'OpenTracing'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP OpenTracing TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -299,18 +285,16 @@ pipeline {
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running MP REST Client TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'TCKs/MP-TCKs',
-                            parameters: [
-                                string(name: 'buildProject', value: 'Build'),
-                                string(name: 'payaraBuildNumber', value: buildId),
-                                string(name: 'repoOrg', value: 'payara'),
-                                string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
-                                string(name: 'suites', value: 'Rest-Client'),
-                                string(name: 'jdkVer', value: 'zulu-21'),
-                                string(name: 'distribution', value: 'full')
-                            ]
-                        }
+                        build job: 'TCKs/MP-TCKs',
+                        parameters: [
+                            string(name: 'buildProject', value: 'Build'),
+                            string(name: 'payaraBuildNumber', value: buildId),
+                            string(name: 'repoOrg', value: 'payara'),
+                            string(name: 'testBranchCommitOrTag', value: 'microprofile-6.1-Payara7'),
+                            string(name: 'suites', value: 'Rest-Client'),
+                            string(name: 'jdkVer', value: 'zulu-21'),
+                            string(name: 'distribution', value: 'full')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran MP REST Client TCK  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -318,31 +302,23 @@ pipeline {
                     agent {
                         label 'general-purpose'
                     }
-                    options {
-                        retry(3)
-                    }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running EE8 tests  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'Miscellaneous/Run-EE8-Samples',
-                            parameters: [
-                                string(name: 'payaraBuildNumber', value: "${buildId}"),
-                                string(name: 'buildProject', value: "Build/Build"),
-                                string(name: 'repoOrg', value: 'Payara'),
-                                string(name: 'buildSpecificBranchCommitOrTag', value: 'Payara7'),
-                                string(name: 'jdkChoice', value: 'zulu-21'),
-                                string(name: 'arquillianProfile', value: 'payara-server-remote')
-                            ]
-                        }
+                        build job: 'Miscellaneous/Run-EE8-Samples',
+                        parameters: [
+                            string(name: 'payaraBuildNumber', value: "${buildId}"),
+                            string(name: 'buildProject', value: "Build/Build"),
+                            string(name: 'repoOrg', value: 'Payara'),
+                            string(name: 'buildSpecificBranchCommitOrTag', value: 'Payara7'),
+                            string(name: 'jdkChoice', value: 'zulu-21'),
+                            string(name: 'arquillianProfile', value: 'payara-server-remote')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran test  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
                 stage('CargoTracker Tests') {
                     agent {
                         label 'general-purpose'
-                    }
-                    options {
-                        retry(3)
                     }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running CargoTracker tests  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
@@ -362,22 +338,17 @@ pipeline {
                     agent {
                         label 'general-purpose'
                     }
-                    options {
-                        retry(3)
-                    }
                     steps {
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running EE7 tests  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                            build job: 'Miscellaneous/Run-EE7-Samples',
-                            parameters: [
-                                string(name: 'payaraBuildNumber', value: "${buildId}"),
-                                string(name: 'buildProject', value: "Build/Build"),
-                                string(name: 'repoOrg', value: 'Payara'),
-                                string(name: 'buildSpecificBranchCommitOrTag', value: 'Payara7'),
-                                string(name: 'jdkChoice', value: 'zulu-21'),
-                                string(name: 'arquillianProfile', value: 'payara-server-remote')
-                            ]
-                        }
+                        build job: 'Miscellaneous/Run-EE7-Samples',
+                        parameters: [
+                            string(name: 'payaraBuildNumber', value: "${buildId}"),
+                            string(name: 'buildProject', value: "Build/Build"),
+                            string(name: 'repoOrg', value: 'Payara'),
+                            string(name: 'buildSpecificBranchCommitOrTag', value: 'Payara7'),
+                            string(name: 'jdkChoice', value: 'zulu-21'),
+                            string(name: 'arquillianProfile', value: 'payara-server-remote')
+                        ]
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran test  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                 }
@@ -401,7 +372,7 @@ pipeline {
                         -pl fish.payara.samples:payara-samples-profiled-tests"""
 
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running test with Payara Micro  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-                        sh """mvn -V -B -ff clean install --strict-checksums -Ppayara-micro-managed,install-deps \
+                        sh """mvn -V -B -ff clean install --strict-checksums -Ppayara-micro-managed \
                         -Dsurefire.rerunFailingTestsCount=2 \
                         -Dfailsafe.rerunFailingTestsCount=2 \
                         -f appserver/tests/functional/payara-micro """
@@ -436,26 +407,23 @@ pipeline {
                                 -Dfailsafe.rerunFailingTestsCount=2 \
                                 -f appserver/tests/functional/payara-application-xml """
                         echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran payara-application.xml tests  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
+
+                        echo '*#*#*#*#*#*#*#*#*#*#*#*#  Running JMS ping tests  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
+                        sh """export PAYARA_HOME=${pwd()}/payara7 && python3 appserver/tests/functional/jms/test_jms_ping.py \
+                        --domain-name ${env.DOMAIN_NAME} """
+                        echo '*#*#*#*#*#*#*#*#*#*#*#*#  Ran JMS ping tests  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     }
                     post {
                         always {
                             stopDomain()
                         }
-                        cleanup {
+                        success {
                             processReport()
-                            saveLogsAndCleanup 'asadmin-log.zip'
                         }
+                        cleanup {
+                            saveLogsAndCleanup 'asadmin-log.zip'
+                       }
                     }
-                }
-            }
-        }
-    }
-    post {
-        unsuccessful {
-            script {
-                if (currentBuild.result == 'UNSTABLE') {
-                    currentBuild.result = 'SUCCESS'
-                    echo "Build result changed from UNSTABLE to SUCCESS for GitHub reporting"
                 }
             }
         }
@@ -476,12 +444,6 @@ void setupDomain() {
     sh "${ASADMIN} start-domain ${DOMAIN_NAME}"
     sh "${ASADMIN} start-database || true"
     echo '*#*#*#*#*#*#*#*#*#*#*#*#  Domain setup complete  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
-}
-
-void processReportAndStopDomain() {
-    junit '**/target/*-reports/*.xml'
-    sh "${ASADMIN} stop-domain ${DOMAIN_NAME}"
-    sh "${ASADMIN} stop-database || true"
 }
 
 void processReport() {
