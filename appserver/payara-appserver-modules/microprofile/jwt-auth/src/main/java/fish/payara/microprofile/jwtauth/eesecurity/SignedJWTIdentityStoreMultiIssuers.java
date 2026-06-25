@@ -77,6 +77,10 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
             try {
                 SignedJWT jwt = SignedJWT.parse(signedJWTCredential.getSignedJWT());
                 String issuer = jwt.getJWTClaimsSet().getIssuer();
+                if (!acceptedIssuers.contains(issuer)) {
+                    return CredentialValidationResult.NOT_VALIDATED_RESULT;
+                }
+
                 setAcceptedIssuer(issuer);
                 setPublicKeyStore(issuer2PublicKeyStore.get(issuer));
             } catch (ParseException ex) {
