@@ -224,14 +224,6 @@ public class SignedJWTIdentityStore implements IdentityStore {
         optionalConfigProperty.put(Names.DECRYPTOR_KEY_ALGORITHM, readConfigOptional(Names.DECRYPTOR_KEY_ALGORITHM, properties, config)); //mp.jwt.decrypt.key.algorithm
     }
 
-    public void setAcceptedIssuer(String acceptedIssuer) {
-        this.acceptedIssuer = acceptedIssuer;
-    }
-
-    public void setPublicKeyStore(JwtPublicKeyStore publicKeyStore) {
-        this.publicKeyStore = publicKeyStore;
-    }
-    
     /*
      * All implementation of IdentityStore are searched, sorted by priority and filtered by the supported validation types. 
      * Only the fork should be call directly,
@@ -240,5 +232,21 @@ public class SignedJWTIdentityStore implements IdentityStore {
     @Override
     public Set<ValidationType> validationTypes() {
         return Collections.emptySet();
+    }
+    
+    protected void setAcceptedIssuer(String acceptedIssuer) {
+        this.acceptedIssuer = acceptedIssuer;
+    }
+
+    protected String getAcceptedIssuer() {
+        return acceptedIssuer;
+    }
+
+    protected void setPublicKeyStore(JwtPublicKeyStore publicKeyStore) {
+        this.publicKeyStore = publicKeyStore;
+    }
+
+    protected JwtPublicKeyStore getPublicKeyStore() {
+        return publicKeyStore;
     }
 }
