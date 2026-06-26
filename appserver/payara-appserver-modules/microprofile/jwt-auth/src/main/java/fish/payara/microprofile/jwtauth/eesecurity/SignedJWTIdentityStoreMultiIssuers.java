@@ -1,5 +1,6 @@
 package fish.payara.microprofile.jwtauth.eesecurity;
 
+import static java.util.logging.Level.WARNING;
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.ParseException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,26 +39,26 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
 
     private static final Logger LOGGER = Logger.getLogger(SignedJWTIdentityStoreMultiIssuers.class.getName());
 
-    protected List<String> acceptedIssuers;
-    protected Map<String, JwtPublicKeyStore> issuer2PublicKeyStore;
+    protected final List<String> acceptedIssuers;
+    protected final Map<String, JwtPublicKeyStore> issuer2PublicKeyStore;
 
     public SignedJWTIdentityStoreMultiIssuers() {
 
         Config config = ConfigProvider.getConfig();
+        acceptedIssuers = new ArrayList<>();
         issuer2PublicKeyStore = new HashMap<>();
 
         Optional<List<String>> optionalIssuers = config.getOptionalValues(ISSUER + "s", String.class);
         if (optionalIssuers.isPresent()) {
-            acceptedIssuers = optionalIssuers.get();
-        } else {
-            acceptedIssuers = Collections.emptyList();
+            acceptedIssuers.addAll(optionalIssuers.get());
         }
 
         for (String issuer : acceptedIssuers) {
             Optional<Properties> properties = readVendorProperties();
             String jwksUri = getJwksUri(issuer);
             if (jwksUri != null) {
-                var ks = new JwtPublicKeyStore(readPublicKeyCacheTTL(properties), readKeyCacheRetainOnErrorDuration(properties), Optional.of(jwksUri));
+                var ks = new JwtPublicKeyStore(readPublicKeyCacheTTL(properties),
+                        readKeyCacheRetainOnErrorDuration(properties), Optional.of(jwksUri));
                 issuer2PublicKeyStore.put(issuer, ks);
             }
         }
@@ -77,12 +78,12 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
             try {
                 SignedJWT jwt = SignedJWT.parse(signedJWTCredential.getSignedJWT());
                 String issuer = jwt.getJWTClaimsSet().getIssuer();
-                if (!acceptedIssuers.contains(issuer)) {
-                    return CredentialValidationResult.NOT_VALIDATED_RESULT;
+                if (acceptedIssuers.contains(issuer)) {
+                    setAcceptedIssuer(issuer);
+                    setPublicKeyStore(issuer2PublicKeyStore.get(issuer));
+                } else {
+                    LOGGER.log(WARNING, "Bad issuer: " + issuer + " is not in the list of accepted issuers");
                 }
-
-                setAcceptedIssuer(issuer);
-                setPublicKeyStore(issuer2PublicKeyStore.get(issuer));
             } catch (ParseException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
@@ -111,11 +112,15 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
                     if (config.containsKey("jwks_uri")) {
                         jwksUri = config.getString("jwks_uri");
                     } else {
-                        LOGGER.log(Level.SEVERE, "Property 'jwks_uri' not found in openid-configuration from Issuer: {0}", providerConfigurationURI.toString());
+                        LOGGER.log(Level.SEVERE,
+                                "Property 'jwks_uri' not found in openid-configuration from Issuer: {0}",
+                                providerConfigurationURI.toString());
                     }
-                };
+                }
+                ;
             } else {
-                LOGGER.log(Level.SEVERE, "Cannot load openid-configuration from Issuer: {0} status code: {1}", new Object[]{providerConfigurationURI.toString(), response.statusCode()});
+                LOGGER.log(Level.SEVERE, "Cannot load openid-configuration from Issuer: {0} status code: {1}",
+                        new Object[] { providerConfigurationURI.toString(), response.statusCode() });
             }
         } catch (URISyntaxException | IOException | InterruptedException ex) {
             LOGGER.log(Level.SEVERE, "Error loading public certificate from Issuer " + issuer, ex);
@@ -123,7 +128,10 @@ public class SignedJWTIdentityStoreMultiIssuers extends SignedJWTIdentityStore {
         return jwksUri;
     }
 
-    /* We will be called directly, and the fork then calls the original implementation */
+    /*
+     * We will be called directly, and the fork then calls the original
+     * implementation
+     */
     @Override
     public Set<ValidationType> validationTypes() {
         return DEFAULT_VALIDATION_TYPES;
