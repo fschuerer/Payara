@@ -49,6 +49,7 @@ import com.sun.enterprise.web.accesslog.CommonAccessLogFormatterImpl;
 import com.sun.enterprise.web.accesslog.DefaultAccessLogFormatterImpl;
 import com.sun.enterprise.web.pluggable.WebContainerFeatureFactory;
 import com.sun.enterprise.util.io.FileUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.catalina.*;
 import org.apache.catalina.valves.ValveBase;
 import org.glassfish.api.admin.ServerEnvironment;
@@ -58,7 +59,6 @@ import org.glassfish.web.LogFacade;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -70,7 +70,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.glassfish.internal.api.LogManager;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 
 /**
  * <p>Implementation of the <b>Valve</b> interface that generates a web server
@@ -93,7 +95,6 @@ public final class PEAccessLogValve
     private static final Logger _logger = LogFacade.getLogger();
 
     private static final ResourceBundle _resourceBundle = _logger.getResourceBundle();
-    private final LogManager logManager = org.glassfish.internal.api.Globals.get(LogManager.class);
 
     // Predefined patterns
     private static final String COMMON_PATTERN = "common";
@@ -144,6 +145,8 @@ public final class PEAccessLogValve
      * The prefix that is added to log file filenames.
      */
     private String prefix = "";
+
+    private Pattern filter = null;
 
     /**
      * Should we rotate our log file?
@@ -429,6 +432,19 @@ public final class PEAccessLogValve
         }
     }
 
+    public void setFilter(String regex) {
+        if (regex == null || regex.trim().isEmpty()) {
+            filter = null;
+        } else {
+            try {
+                filter = Pattern.compile(regex);
+            } catch (PatternSyntaxException e) {
+                _logger.log(Level.WARNING, "Couldn't create access log filter due to RegEx syntax error: " + e.getMessage(), e);
+                filter = null;
+            }
+        }
+    }
+
     /**
      * Should we rotate the logs
      * @return
@@ -572,6 +588,10 @@ public final class PEAccessLogValve
             return;
         }
 
+        if (filter != null && request instanceof HttpServletRequest hreq && filter.matcher(hreq.getRequestURI()).matches()) {
+            return;
+        }
+
         synchronized (lock){
             // Reset properly the buffer in case of an unexpected
             // exception.
@@ -626,9 +646,12 @@ public final class PEAccessLogValve
             try{
                 charBuffer.flip();
                 String bufString = charBuffer.toString();
-                if (accessLogToConsole && !bufString.isEmpty()) {
-                    PrintStream outStream = logManager != null ? logManager.getOutStream() : System.out;
-                    outStream.print(bufString.replaceAll("(?m)^", "AccessLog: "));
+                if (accessLogToConsole && !bufString.isEmpty() && _logger.isLoggable(Level.INFO)) {
+                    for (String line : bufString.split("\n")) {
+                        if (!line.isEmpty()) {
+                            _logger.info("AccessLog: " + line);
+                        }
+                    }
                 }
                 ByteBuffer byteBuffer =
                     ByteBuffer.wrap(bufString.getBytes(Charset.defaultCharset()));
@@ -668,6 +691,7 @@ public final class PEAccessLogValve
             String globalAccessLogWriteInterval, String globalAccessLogPrefix) {
             
         setPrefix(vsId + fac.getDefaultAccessLogPrefix());
+        setFilter(httpService.getAccessLog().getFilter());
         
         boolean start = updateVirtualServerProperties(
                 vsId, vsBean, domain, habitat, globalAccessLogBufferSize,
@@ -896,6 +920,8 @@ public final class PEAccessLogValve
 
         // log to console
         accessLogToConsole = Boolean.parseBoolean(accessLogConfig.getLogToConsoleEnabled());
+
+        setFilter(httpService.getAccessLog().getFilter());
     }
 
     // -------------------------------------------------------- Private Methods

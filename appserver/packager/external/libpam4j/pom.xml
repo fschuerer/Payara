@@ -47,7 +47,7 @@
     <parent>
         <groupId>fish.payara.server.internal.packager</groupId>
         <artifactId>external</artifactId>
-        <version>7.2026.7</version>
+        <version>7.2026.8</version>
     </parent>
 
     <artifactId>libpam4j-repackaged</artifactId>
@@ -71,7 +71,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>6.0.2</version>
                 <configuration>
                     <instructions>
                         <Embed-Dependency>
