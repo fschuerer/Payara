@@ -48,7 +48,7 @@
     <parent>
         <groupId>fish.payara.server</groupId>
         <artifactId>payara-aggregator</artifactId>
-        <version>7.2026.9</version>
+        <version>7.2026.10</version>
     </parent>
 
     <artifactId>payara-nucleus-parent</artifactId>
@@ -70,7 +70,7 @@
 
         <maven.jaxws.plugin.version>2.6</maven.jaxws.plugin.version>
         <maven.apt.plugin.version>1.0-alpha-5</maven.apt.plugin.version>
-        <maven.plugin.api.version>3.9.16</maven.plugin.api.version>
+        <maven.plugin.api.version>3.10.0</maven.plugin.api.version>
 
         <!-- Servlet -->
         <grizzly.npn.api.version>2.0.0.payara-p1</grizzly.npn.api.version>
@@ -95,8 +95,8 @@
         <!-- Javassist (JAVA programming ASSISTant) makes Java bytecode manipulation simple. It is a class library for editing bytecodes in Java. -->
         <javassist.version>3.33.0-GA</javassist.version>
 
-        <apache.sshd.version>2.19.0</apache.sshd.version>
-        <slf4j.version>2.0.18</slf4j.version>
+        <apache.sshd.version>2.20.0</apache.sshd.version>
+        <slf4j.version>2.0.20</slf4j.version>
 
         <!-- Primitive Function Library (PFL); a library of simple utilities used by Glassfish -->
         <pfl.version>5.1.1</pfl.version>
@@ -131,12 +131,12 @@
         <glassfish-management-api.version>3.3.0.payara-p1</glassfish-management-api.version>
         <btrace.version>1.2.3</btrace.version>
         <opendmk.version>1.0-b01-ea</opendmk.version>
-        <ha-api.version>3.1.13</ha-api.version>
-        <mockito.version>5.23.0</mockito.version>
+        <ha-api.version>3.2.0</ha-api.version>
+        <mockito.version>5.24.0</mockito.version>
 
         <!-- Build -->
         <glassfishbuild.version>3.2.20.payara-p3</glassfishbuild.version>
-        <logging-annotation-processor.version>1.10</logging-annotation-processor.version>
+        <logging-annotation-processor.version>1.11</logging-annotation-processor.version>
         <command-security-plugin.version>1.0.22</command-security-plugin.version>
         <command.security.maven.plugin.isFailureFatal>false</command.security.maven.plugin.isFailureFatal>
         <nucleus.install.dir.name>nucleus</nucleus.install.dir.name>
@@ -149,7 +149,7 @@
 
         <awaitility.version>4.3.0</awaitility.version>
 
-        <kotlin-version>2.4.10</kotlin-version>
+        <kotlin-version>2.4.20</kotlin-version>
 
         <payara.deployment.transformer.version>2.0.0-SNAPSHOT</payara.deployment.transformer.version>
     </properties>
@@ -800,7 +800,7 @@ Parent is ${project.parent}</echo>
             <dependency>
                 <groupId>org.jmockit</groupId>
                 <artifactId>jmockit</artifactId>
-                <version>1.40</version>
+                <version>1.50</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
